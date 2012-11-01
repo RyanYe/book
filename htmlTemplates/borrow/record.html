@@ -1,0 +1,22 @@
+<center>
+<h1>Latest Records</h1></center>
+{%if latest_record %}
+	<center>
+	<table border="2">
+		<tr>
+			<th>Book Name</th>
+			<th> User </th>
+			<th> Borrowed date </th>
+		</tr>
+	{% for record in latest_record %}
+		<tr>
+			<td><a href="/borrow/book/{{record.book_id}}/">{{record.books}}</a></td>
+			<td><a href="/borrow/user/{{record.user_id}}/">{{record.users}}</a></td>
+			<td>{{record.borrow_date}}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	</center>
+{% else %}
+	<p> No records are available.</p>
+{% endif %}

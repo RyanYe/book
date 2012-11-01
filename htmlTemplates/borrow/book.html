@@ -1,0 +1,16 @@
+<h1>{{book.name}}</h1>
+{% if error_message %}
+<p><strong>{{error_message}}</strong></p>
+{% endif%}
+
+<form action="/borrow/book/{{book.id}}/borrow/" method="post">
+{% csrf_token %}
+<p>ISBN:	{{book.ISBN}}</p>
+<p>Author:	{{book.author}}</p>
+<p>Status: 	{{book.status}}</p>
+{% if book.status == "available" %}
+<input type="submit" value="Borrow"/>
+{% else %}
+<p> this book has already borrowed by <a href="/borrow/user/{{user.id}}">{{user.name}}</a></p>
+{%endif%}
+</form>

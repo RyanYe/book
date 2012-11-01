@@ -1,0 +1,16 @@
+<center>
+<h1>Book List</h1>
+
+<table border="1">
+	<tr>
+		<th>Book name</th>
+		<th>Status</th>
+	</tr>
+	{% for book in book_list %}
+		<tr>
+			<td>{{book.name}}</td>
+			<td><a href="/borrow/book/{{book.id}}"> {{book.status}}</td>
+		</tr>
+	{% endfor %}
+</table>
+</center>
