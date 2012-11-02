@@ -19,5 +19,5 @@ class RecordAdmin(admin.ModelAdmin):
 	fields = ['book','user','borrow_date','back_date']
 		
 admin.site.register(Book, BookAdmin)
-admin.site.register(User, UserAdmin)
+# admin.site.register(User, UserAdmin)
 admin.site.register(Record,RecordAdmin)

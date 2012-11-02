@@ -18,7 +18,7 @@ def record(request):
 
 def book(request,book_id):
 	b = get_object_or_404(Book,pk=book_id)
-	u = get_object_or_404(User,pk=1)
+	u = get_object_or_404(User,username="yuye")
 	return render_to_response('borrow/book.html',{'book':b,'user':u},context_instance=RequestContext(request))
 
 def borrow(request,book_id):
@@ -27,15 +27,16 @@ def borrow(request,book_id):
 	b.status = "borrowed"
 	b.save()
 
-	u = User.objects.get(pk=2)
+	username="yuye"
+	u = User.objects.get(username__exact=username)
 
 	record = Record(book=b, user=u, borrow_date=timezone.now())
 	record.save();
 	return HttpResponseRedirect(reverse('borrow.views.book',args={b.id,}))
 
-def user(request,user_id):
-	u = get_object_or_404(User,pk=user_id)
-	return render_to_response('borrow/user.html',{'user':u},context_instance=RequestContext(request))
+# def user(request,user_id):
+# 	u = get_object_or_404(User,pk=username)
+# 	return render_to_response('borrow/user.html',{'user':u},context_instance=RequestContext(request))
 def booklist(request):
 	b = Book.objects.all()
 	return render_to_response('borrow/book_list.html',{"book_list":b})

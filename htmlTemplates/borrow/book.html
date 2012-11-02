@@ -11,6 +11,6 @@
 {% if book.status == "available" %}
 <input type="submit" value="Borrow"/>
 {% else %}
-<p> this book has already borrowed by <a href="/borrow/user/{{user.id}}">{{user.name}}</a></p>
+<p> this book has already borrowed by <a href="/borrow/user/{{user.id}}">{{user.username}}</a></p>
 {%endif%}
 </form>
