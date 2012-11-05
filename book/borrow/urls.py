@@ -4,6 +4,8 @@ from borrow.models import Book, User, Record
 
 urlpatterns = patterns('',
 	url(r'^$','borrow.views.booklist'),
+  url(r'^login/$','borrow.views.login_view'),
+  url(r'^login_result/$','borrow.views.login_result'),
   url(r'^record/$','borrow.views.record'),
   url(r'^book/(?P<book_id>\d+)/borrow/$',"borrow.views.borrow"),
 	url(r'^book/(?P<book_id>\d+)/$','borrow.views.book'),

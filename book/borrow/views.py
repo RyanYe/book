@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 import datetime
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 def record(request):
 	latest_record = Record.objects.raw('select a.* ,\
@@ -16,6 +17,7 @@ def record(request):
 	 )
 	return render_to_response('borrow/record.html',{"latest_record":latest_record})
 
+@login_required
 def book(request,book_id):
 	b = get_object_or_404(Book,pk=book_id)
 	u = get_object_or_404(User,username="yuye")
@@ -37,21 +39,30 @@ def borrow(request,book_id):
 # def user(request,user_id):
 # 	u = get_object_or_404(User,pk=username)
 # 	return render_to_response('borrow/user.html',{'user':u},context_instance=RequestContext(request))
+@login_required
 def booklist(request):
 	b = Book.objects.all()
 	return render_to_response('borrow/book_list.html',{"book_list":b})
-# def login_view(request):
-# 	user = authenticate(username=request.POST['username'],passowrd=request.POST['passowrd'])
-# 	if user is not None:
-# 		login(request,user)
-# 		print request.user
-# 		return list_product(request)
-# 	else:
-# 		return store_view(request)
+
+def login_view(request):
+	return render_to_response('borrow/login_view.html',context_instance=RequestContext(request))
+
+def login_result(request):
+
+
+	user = authenticate(username=request.POST['username'],passowrd=request.POST['password'])
+	if user is not None:
+		login(request,user)
+		b = Book.objects.all()
+		return render_to_response('borrow/book_list.html',{"book_list":b})
+	else:
+		info =  "wrong username or password"
+		user = User.objects.get(username__exact=request.POST['username'])
+		return render_to_response('borrow/failed.html',{"info":user.password})
 
 # def logout_view(request):
 # 	logout(request)
 # 	return store_view(request)
-#def user(request,user_id):
-#	u = get_object_or_404(User,pk=user_id)
-#	return render_to_response('borrow/index.html',{'user':u})
+# def user(request,user_id):
+# 	u = get_object_or_404(User,pk=user_id)
+# 	return render_to_response('borrow/index.html',{'user':u})
