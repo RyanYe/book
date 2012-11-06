@@ -14,6 +14,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^$','borrow.views.booklist'),
+    url(r'^accounts/login/$','borrow.views.login_view'),
+    url(r'^accounts/logout/$','borrow.views.logout_view'),
     url(r'^borrow/',include('borrow.urls')),
     url(r'^admin/', include(admin.site.urls)),
  #    url(r'^accounts/login/$'),'borrow.login_view'),

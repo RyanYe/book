@@ -13,15 +13,6 @@ class Book(models.Model):
 	def __unicode__(self):
 		return self.name
 
-
-
-# class User(models.Model):
-# 	"""User Model"""
-# 	name = models.CharField(max_length=100)
-# 	password = models.CharField(max_length=50)
-
-# 	def __unicode__(self):
-# 		return self.name
 		
 class Record(models.Model):
 	"""Record Model"""
