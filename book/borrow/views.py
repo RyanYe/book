@@ -17,7 +17,7 @@ def record(request):
 	 as a left join borrow_book as b left join borrow_user \
 	 as u where a.book_id=b.id and a.user_id=u.id'
 	 )
-	return render_to_response('borrow/record.html',{"latest_record":latest_record})
+	return render_to_response('borrow/record.html',{"latest_record":latest_record},context_instance=RequestContext(request))
 @login_required
 def book(request,book_id):
 	b = get_object_or_404(Book,pk=book_id)
@@ -41,11 +41,12 @@ def borrow(request,book_id):
 @login_required
 def booklist(request):
 	b = Book.objects.all()
-	return render_to_response('borrow/book_list.html',{"book_list":b})
+	return render_to_response('borrow/book_list.html',{"book_list":b},context_instance=RequestContext(request))
 
 def login_view(request):
 	return render_to_response('borrow/login_view.html',context_instance=RequestContext(request))
 
+# @login_required
 def login_result(request):
 	username = request.POST['username']
 	password = request.POST['password']
@@ -54,7 +55,7 @@ def login_result(request):
 	if user is not None:
 		login(request,user)
 		b = Book.objects.all()
-		return render_to_response('borrow/book_list.html',{"book_list":b})
+		return render_to_response('borrow/book_list.html',{"book_list":b},context_instance=RequestContext(request))
 	else:
 		info = "wrong username or password"
 		user = User.objects.get(username__exact='yyz')
