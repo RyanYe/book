@@ -1,0 +1,19 @@
+<center>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<h1>Log In </h1>
+
+<form action="/borrow/login_result/" method="post">
+{% csrf_token %}
+Username: <input type="text" name="username"/>
+<br/>
+Password: <input type="password" name="password"/>
+<br/>
+<input type="submit" value="Log In"/>
+<a href="/borrow/regist">Regist</a>
+</form>
+</center>
