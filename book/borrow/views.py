@@ -71,3 +71,22 @@ def logout_view(request):
 # def user(request,user_id):
 # 	u = get_object_or_404(User,pk=user_id)
 # 	return render_to_response('borrow/index.html',{'user':u})
+
+def regist(request):
+	return render_to_response('borrow/regist.html', context_instance=RequestContext(request));
+
+def regist_result(request):
+	username=request.POST['username']
+	user = User.objects.get(username__exact=username)
+	if user is not None :
+		return render_to_response('borrow/regist.html',{"info":"username already exists"}, context_instance=RequestContext(request))
+	password1 = request.POST['password1']
+	password2 = request.POST['password2']
+
+	if password1 == password2 :
+		user = User.objects.creat_user(username=username,password=password1)
+		user.is_staff = True
+		user.save
+		return render_to_response('borrow/login_view.html',context_instance=RequestContext(request))
+	else :
+		return render_to_response('borrow/regist.html',{"info":"passwords aren't match"}, context_instance=RequestContext(request))
