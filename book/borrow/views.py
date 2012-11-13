@@ -12,16 +12,17 @@ from django.contrib.auth.decorators import login_required
 
 
 def record(request):
-	latest_record = Record.objects.raw('select a.* ,\
-	 u.name as users, b.name as books from borrow_record \
-	 as a left join borrow_book as b left join borrow_user \
-	 as u where a.book_id=b.id and a.user_id=u.id'
-	 )
+	sql = 'select a.* ,\
+	 b.name as books, b.id as bookId from borrow_record \
+	 as a , borrow_book as b  \
+	 where a.book_id=b.id and a.user_id='
+	sql +=str(request.user.id)
+	latest_record = Record.objects.raw(sql)
 	return render_to_response('borrow/record.html',{"latest_record":latest_record},context_instance=RequestContext(request))
 @login_required
 def book(request,book_id):
 	b = get_object_or_404(Book,pk=book_id)
-	u = get_object_or_404(User,username="yuye")
+	u = request.user
 	return render_to_response('borrow/book.html',{'book':b,'user':u},context_instance=RequestContext(request))
 
 @login_required
@@ -31,8 +32,7 @@ def borrow(request,book_id):
 	b.status = "borrowed"
 	b.save()
 
-	username="yuye"
-	u = User.objects.get(username__exact=username)
+	u = request.user
 
 	record = Record(book=b, user=u, borrow_date=timezone.now())
 	record.save();
@@ -58,11 +58,7 @@ def login_result(request):
 		return render_to_response('borrow/book_list.html',{"book_list":b},context_instance=RequestContext(request))
 	else:
 		info = "wrong username or password"
-		user = User.objects.get(username__exact='yyz')
-		if user.check_password('kijiji'):
-			return render_to_response('borrow/failed.html',{"info":info})
-		else:
-			return render_to_response('borrow/failed.html',{"info":user.password})
+		return render_to_response('borrow/login_view.html',{"info":info},context_instance=RequestContext(request))
 @login_required
 def logout_view(request):
 	logout(request)
@@ -77,16 +73,19 @@ def regist(request):
 
 def regist_result(request):
 	username=request.POST['username']
-	user = User.objects.get(username__exact=username)
-	if user is not None :
+	try:
+		user = User.objects.get(username__exact=username)
 		return render_to_response('borrow/regist.html',{"info":"username already exists"}, context_instance=RequestContext(request))
-	password1 = request.POST['password1']
-	password2 = request.POST['password2']
+		
+	except:
+		
+		password1 = request.POST['password1']
+		password2 = request.POST['password2']
 
-	if password1 == password2 :
-		user = User.objects.creat_user(username=username,password=password1)
-		user.is_staff = True
-		user.save
-		return render_to_response('borrow/login_view.html',context_instance=RequestContext(request))
-	else :
-		return render_to_response('borrow/regist.html',{"info":"passwords aren't match"}, context_instance=RequestContext(request))
+		if password1 == password2 :
+			user = User.objects.create_user(username=username,password=password1)
+			user.is_staff = True
+			user.save
+			return render_to_response('borrow/login_view.html',context_instance=RequestContext(request))
+		else :
+			return render_to_response('borrow/regist.html',{"info":"passwords aren't match"}, context_instance=RequestContext(request))
