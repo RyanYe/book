@@ -7,6 +7,7 @@ class BookAdmin(admin.ModelAdmin):
 		('Status',{'fields':['status']}),
 	]
 	search_fields = ['name','ISBN']
+	list_display = ('name','ISBN','status')
 
 class UserAdmin(admin.ModelAdmin):
 	fieldsets = [
@@ -17,6 +18,7 @@ class UserAdmin(admin.ModelAdmin):
 
 class RecordAdmin(admin.ModelAdmin):
 	fields = ['book','user','borrow_date','back_date']
+	list_display = ('id','book','user','borrow_date','back_date')
 		
 admin.site.register(Book, BookAdmin)
 # admin.site.register(User, UserAdmin)
