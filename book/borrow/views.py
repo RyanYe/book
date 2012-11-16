@@ -20,6 +20,11 @@ def record(request):
 	latest_record = Record.objects.raw(sql)
 	return render_to_response('borrow/record.html',{"latest_record":latest_record},context_instance=RequestContext(request))
 
+@login_required
+def user(request,user_id):
+	u = get_object_or_404(User,pk=user_id)
+	return render_to_response('borrow/user.html',{'user':u})
+
 
 @login_required
 def book(request,book_id):
