@@ -2,12 +2,13 @@ from borrow.models import Book, User, Record
 from django.contrib import admin
 class BookAdmin(admin.ModelAdmin):
 	fieldsets = [ 
-		( None,		{'fields':['name']}),
+		( None,		{'fields':['title']}),
 		('Detail Info',{'fields':['ISBN','author']}),
 		('Status',{'fields':['status']}),
 	]
-	search_fields = ['name','ISBN']
-	list_display = ('name','ISBN','status')
+	search_fields = ['title','ISBN']
+	list_display = ('title','ISBN','status')
+
 
 class UserAdmin(admin.ModelAdmin):
 	fieldsets = [
@@ -20,6 +21,7 @@ class RecordAdmin(admin.ModelAdmin):
 	fields = ['book','user','borrow_date','back_date']
 	list_display = ('id','book','user','borrow_date','back_date')
 		
+
 admin.site.register(Book, BookAdmin)
 # admin.site.register(User, UserAdmin)
 admin.site.register(Record,RecordAdmin)

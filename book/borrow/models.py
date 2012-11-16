@@ -5,13 +5,21 @@ from django.utils import timezone
 
 class Book(models.Model):
 	"""Book model"""
-	name = models.CharField(max_length=200)
+	STATUS = (
+		(u'Available',u'Available'),
+		(u'Borrowed',u'Borrowed'),
+		)
+	title = models.CharField(max_length=200,null=True,blank=True)
 	ISBN = models.CharField(max_length=20)
-	author = models.CharField(max_length=100)
-	status = models.CharField(max_length=20)
+	author = models.CharField(max_length=100,null=True,blank=True)
+	status = models.CharField(max_length=20,choices=STATUS)
+	img = models.CharField(max_length=200,null=True,blank=True)
+	pages = models.CharField(max_length=10,null=True,blank=True)
+	publisher = models.CharField(max_length=200,null=True,blank=True)
+	summary = models.CharField(max_length=1000,null=True,blank=True)
 
 	def __unicode__(self):
-		return self.name
+		return self.title
 
 		
 class Record(models.Model):
@@ -19,7 +27,7 @@ class Record(models.Model):
 	book = models.ForeignKey(Book)
 	user = models.ForeignKey(User)
 	borrow_date = models.DateTimeField()
-	back_date = models.DateTimeField(null="true")
+	back_date = models.DateTimeField(null=True)
 
 	def __unicode__(self):
 		b = Book.objects.get(id=self.book_id);

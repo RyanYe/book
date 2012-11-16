@@ -9,7 +9,8 @@ from django.contrib.auth import authenticate, login, logout,hashers
 import datetime
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
+import json
+import urllib
 @login_required
 def record(request):
 	sql = 'select a.* ,\
@@ -29,7 +30,16 @@ def user(request,user_id):
 @login_required
 def book(request,book_id):
 	b = get_object_or_404(Book,pk=book_id)
-	if b.status=="available":
+	isbn = b.ISBN
+	authors = b.author
+	summary = b.summary
+	summarylist = summary.split('\r\n')
+	title = b.title
+	img = b.img
+	pages = b.pages
+	publisher = b.publisher
+
+	if b.status=="Available":
 		u = request.user
 	else:
 		sql = ' select * from borrow_record where book_id='+str(book_id)+' order by borrow_date DESC'
@@ -37,14 +47,14 @@ def book(request,book_id):
 		userId = borrow_date.user_id
 		u = get_object_or_404(User,pk=userId)
 
-	return render_to_response('borrow/book.html',{'book':b,'user':u},context_instance=RequestContext(request))
-
+	return render_to_response('borrow/book.html',{'book':b,'user':u,"authors":authors,"summarylist":summarylist,"title":title,"img":img,"pages":pages,'publisher':publisher},context_instance=RequestContext(request))
+	# return render_to_response('borrow/book.html',{'book':b,'user':u,"author":data},context_instance=RequestContext(request))
 
 @login_required
 def borrow(request,book_id):
 
 	b = Book.objects.get(pk=book_id)
-	b.status = "borrowed"
+	b.status = "Borrowed"
 	b.save()
 
 	u = request.user
@@ -62,7 +72,7 @@ def return_book(request,record_id):
 	r.save()
 	bookID = r.book_id
 	book = get_object_or_404(Book,pk=bookID)
-	book.status = "available"
+	book.status = "Available"
 	book.save()
 	
 	return HttpResponseRedirect(reverse('borrow.views.record'))
@@ -70,6 +80,11 @@ def return_book(request,record_id):
 @login_required
 def booklist(request):
 	b = Book.objects.all()
+	for book in b:
+		download(book.id)
+
+	b = Book.objects.all()
+
 	return render_to_response('borrow/book_list.html',{"book_list":b},context_instance=RequestContext(request))
 
 
@@ -125,3 +140,24 @@ def regist_result(request):
 			return render_to_response('borrow/login_view.html',context_instance=RequestContext(request))
 		else :
 			return render_to_response('borrow/regist.html',{"info":"passwords aren't match"}, context_instance=RequestContext(request))
+
+
+def download(pk):
+	sql = "select * from borrow_book where id="+str(pk)
+	books = Book.objects.raw(sql)
+	for book in books:
+		if book.title is None or book.title=="":
+			isbn = book.ISBN
+
+			url = 'http://api.douban.com/v2/book/isbn/'+isbn
+			page = urllib.urlopen(url)
+			data = page.read()
+			ddata = json.read(data)
+			book.author = ddata['author']
+			book.summary = ddata['summary']
+			book.title = ddata['title']
+			book.img = ddata['images']['large']
+			book.pages = ddata['pages']
+			book.publisher = ddata['publisher']
+
+			book.save()
